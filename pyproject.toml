@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "goodies"
+version = "0.1.0"
+description = ""
+authors = ["Ben Labaschin <benjaminlabaschin@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.10.4"
+uvicorn = "^0.17.6"
+boto3 = "^1.23.9"
+fastapi = "^0.78.0"
+pydantic = "^1.9.1"
+pandas = "^1.4.2"
+requests = "^2.27.1"
+python-dotenv = "^0.20.0"
+structlog = "^22.1.0"
+
+[tool.poetry.dev-dependencies]
+ipykernel = "^6.13.0"
+jupyter = "^1.0.0"
+seaborn = "^0.11.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 99 # override black's default line-length
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.tox
+  | venv
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+# make it compatible with black
+profile = "black"

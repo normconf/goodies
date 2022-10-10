@@ -1,0 +1,60 @@
+"""Configuration for the app."""
+# flake8: noqa: E501
+# Dependencies
+
+from functools import lru_cache
+from os import environ
+from typing import Optional
+
+import structlog
+from pydantic import BaseSettings, Field
+
+log = structlog.get_logger()
+
+###### SETTINGS #######
+
+## Note: Pydantic reads in .env files without explicit need to call load_dotenv()
+class Settings(BaseSettings):
+    app_env: Optional[str] = Field("LOCAL", title="App Environment")
+    app_version: Optional[str] = Field(None, title="App Version")
+    app_port: Optional[int] = Field(
+        8000,
+        title="Application Port",
+        description="Port to run the application on, defaults to 8000",
+    )
+    access_key_id: Optional[str] = Field(None, title="AWS Access Key")
+    region: Optional[str] = Field(None, title="AWS Region")
+    hash_key: Optional[str] = Field(None, title="Secret Hash Key")
+    secret_access_key: Optional[str] = Field(None, title="AWS Secret Key")
+    aws_profile_name: Optional[str] = Field(None, title="AWS Profile Name")
+
+    class Config:
+        env_file = "app/.local.env"
+        env_file_encoding = "utf-8"
+
+
+@lru_cache
+def get_settings(env=None):
+    """Requires environment variable to be passed at run-time to determine which .env file to use.
+    Depends on which environment you'd prefer to emulate:
+    LOCAL — Local repo
+    DEV — DOCKER testing
+    INTEGRATION — AWS + Bubble Testing
+    PRODUCTION — AWS + Bubble Customer Facing
+
+    Returns:
+        Settings()
+    """
+    if not env:
+        env = environ.get("ENV")
+    if env == "DEV":
+        return Settings(_env_file="app/.dev.env", _env_file_encoding="utf-8")
+    elif env == "INTEGRATION":
+        return Settings(app_env="INTEGRATION", _env_file="app/.integration.env")
+    elif env == "PRODUCTION":
+        return Settings(app_env="PRODUCTION", _env_file="app/.dev.env")
+    else:
+        return Settings()
+
+
+settings = get_settings()
