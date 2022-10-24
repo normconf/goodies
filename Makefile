@@ -24,7 +24,7 @@ integration:
 build:
 	docker build -f ./Dockerfile -t goodies .
 
-run:
+run: build
 	docker run --env-file ./app/.integration.env --rm -it --name goodies -p 8000:8000 goodies
 
 test:
