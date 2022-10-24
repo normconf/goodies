@@ -1,0 +1,79 @@
+name: Goodies CICD
+# Controls when the action will run.
+on:
+# Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    paths:
+      - goodies/**
+    branches:
+      - main
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+env:
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}                   # set this to your preferred AWS region, e.g. us-west-1
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  ECR_APP_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}           # App repository name
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}                # set this to your Amazon ECS service name
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}                # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION:  .aws/normconf-task-definition.json     # set this to the path to your Amazon ECS task definition
+                                               # file, e.g. .aws/task-definition.json
+  APP_CONTAINER_NAME: goodies           # set this to the name of the container in the
+                                               # containerDefinitions section of your task definition
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push fastAPI app image to Amazon ECR
+      id: build-fastapi-app
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: latest
+      run: |
+        # Build a docker container and
+        # push it to ECR so that it can
+        # be deployed to ECS.
+        docker build --file ./Dockerfile -t $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG .
+        docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
+        echo "::set-output name=image::$ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG"
+
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def-app
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        container-name: ${{ env.APP_CONTAINER_NAME }}
+        image: ${{ steps.build-fastapi-app.outputs.image }}
+
+    - name: Deploy Amazon ECS task definition
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def-app.outputs.task-definition }}
+        service: ${{ env.ECS_SERVICE }}
+        cluster: ${{ env.ECS_CLUSTER }}
+        wait-for-service-stability: true
+
+    - name: Clean ECR repository
+        run: |
+          python cleanup_images.py ${{ secrets.AWS_ACCESS_KEY }} ${{ secrets.AWS_SECRET_ACCESS_KEY }} ${{ secrets.AWS_REGION }}

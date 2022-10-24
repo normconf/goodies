@@ -18,3 +18,7 @@ Ideas
 1 a randomized response of our curated list of blog posts,
 2 same as 1 but shitposts,
 3 pizza-delimited values and maybe a link to that twitter conversation about delimiters
+
+
+# TO DO
+- remove pycache from repo

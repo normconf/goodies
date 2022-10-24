@@ -3,12 +3,8 @@
 
 SHELL := /bin/bash
 
-.PHONY: activate requirements local integration test poetry run build test
+.PHONY: activate requirements integration run build test
 
-poetry:
-	curl -sSL https://install.python-poetry.org | python3 - && \
-	export PATH="/Users/$$(USER)/.local/bin:$$(PATH)" && \
-	poetry self update
 
 activate:
 	@echo "Connecting pyenv & poetry..."
@@ -20,23 +16,15 @@ activate:
 requirements:
 	poetry export -f requirements.txt --without-hashes | cut -f1 -d\; > requirements.txt
 
-local:
-	export ENV=LOCAL && \
-	poetry run uvicorn app.main:app --host localhost --port 8000 --reload
 
 integration:
 	export ENV=INTEGRATION && \
 	poetry run uvicorn app.main:app --host localhost --reload
 
-test:
-	poetry run pytest -rx
-
 build:
-	cd ../.. && \
-	docker build -f ./goodies/Dockerfile -t goodies .
+	docker build -f ./Dockerfile -t goodies .
 
-run: build
-	cd ../.. && \
+run:
 	docker run --env-file ./app/.integration.env --rm -it --name goodies -p 8000:8000 goodies
 
 test:

@@ -7,14 +7,42 @@ from zipfile import ZIP_DEFLATED, ZipFile
 import structlog
 from fastapi import APIRouter
 from fastapi.responses import FileResponse, StreamingResponse
+from pandas import read_html
 
 log = structlog.get_logger()
 
-normie_router = APIRouter(prefix="/normconf", responses={404: {"description": "Auth router not found"}})
+normie_router = APIRouter(responses={404: {"description": "Auth router not found"}})
 
 goodies_path = 'app/goodies/'
-surprises = [goodies_path + file for file in listdir(Path('app/goodies/'))]
-vicki = [url for url in open('app/goodies/queen.txt').read().splitlines()]
+surprises = [goodies_path + file for file in listdir(Path(goodies_path))]
+
+@normie_router.get('/schedule')
+def get_schedule(as_markdown:bool=True, as_csv:bool=False, as_excel:bool=False):
+    """Return NormConf Schedule\n
+
+    Args:\n
+        as_markdown (bool, optional): Returns scedule as markdown. Defaults to True.
+        as_csv (bool, optional): Returns schedule as CSV. Defaults to False.
+        as_excel (bool, optional): Returns schedule as excel. Defaults to False.
+
+    Returns:\n
+        DataFrame: Returns schedule as Pandas DataFrame
+    """
+    schedule = read_html('https://normconf.com/', header=0)[0]
+
+    if sum([as_markdown, as_csv, as_excel]) != 1:
+        raise ValueError("Only one file return type expected, but got multiple or none!")
+
+    if as_csv:
+        return schedule.to_csv()
+
+    elif as_excel: 
+        return schedule.to_excel("ye_olde_nc_schedule.xlsx", sheet_name='Ye Olde NormConf Schedule')  
+
+    elif as_markdown:
+        return schedule.to_markdown(tablefmt="github", index=False)
+
+    return schedule
 
 @normie_router.get('/normconf')
 def get_normconf():
@@ -51,10 +79,4 @@ def get_goodies():
                              headers = { "Content-Disposition": f"attachment; filename=allthegoodies.zip"}
                             )
 
-@normie_router.get('/queen_vicki')
-def queen():
-    """Return link from Vicki's site
-    """
-    site = choice(vicki)
 
-    return site

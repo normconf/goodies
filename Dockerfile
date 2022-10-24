@@ -1,14 +1,12 @@
-FROM python:3.10
+FROM python:3.10-slim
 
 # Install python/pip
 
-COPY projects/wh_app/ /app
+COPY ./app /app
 
-COPY projects/wh_app/requirements.txt /app/requirements.txt
+COPY ./requirements.txt /app/requirements.txt
 
-WORKDIR /app
-
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r app/requirements.txt
 
 ENV ENV="INTEGRATION"
 

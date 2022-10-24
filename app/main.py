@@ -7,13 +7,14 @@ __maintainer__ = "Ben Labaschin"
 __email__ = "benjaminlabaschin@gmail.com"
 
 
-from app import configure_logger
-from app.config import get_settings, Settings
-from app.schemas import HealthCheck, HealthCheckContent
-from app.normconf import normie_router
 from fastapi import Depends, FastAPI
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
+
+from app import configure_logger
+from app.config import Settings, get_settings
+from app.normconf import normie_router
+from app.schemas import HealthCheck, HealthCheckContent
 
 log = configure_logger()
 

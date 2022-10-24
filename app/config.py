@@ -24,10 +24,8 @@ class Settings(BaseSettings):
     )
     access_key_id: Optional[str] = Field(None, title="AWS Access Key")
     region: Optional[str] = Field(None, title="AWS Region")
-    hash_key: Optional[str] = Field(None, title="Secret Hash Key")
     secret_access_key: Optional[str] = Field(None, title="AWS Secret Key")
-    aws_profile_name: Optional[str] = Field(None, title="AWS Profile Name")
-
+    
     class Config:
         env_file = "app/.local.env"
         env_file_encoding = "utf-8"

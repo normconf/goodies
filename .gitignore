@@ -1,3 +1,7 @@
 /.venv
 /integration.env
 /app/notebooks/
+/app/__pycache__
+/app/*.env
+
+app/__pycache__
