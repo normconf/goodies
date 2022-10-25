@@ -1,13 +1,14 @@
 # app main -- setup logging
 
-import os
 from logging import NOTSET, Logger
+from os import getenv, listdir
+from pathlib import Path
 
 import structlog
 
 
 def am_i_on_ecs() -> bool:
-    return os.getenv("ECS_CONTAINER_METADATA_URI_V4") is not None
+    return getenv("ECS_CONTAINER_METADATA_URI_V4") is not None
 
 
 def configure_logger() -> Logger:
@@ -30,3 +31,7 @@ def configure_logger() -> Logger:
         log_configuration["processors"] = [structlog.processors.JSONRenderer()]
     structlog.configure(**log_configuration)
     return structlog.get_logger()
+
+
+goodies_path = 'app/goodies/'
+surprises = [goodies_path + file for file in listdir(Path(goodies_path))]

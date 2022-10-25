@@ -1,0 +1,13 @@
+the zen of normcore
+sometimes it’s hardcore science,
+but deep down in our heart,
+we know that a for loop in a python file,
+can outperform the state of the art
+all programs live in a system
+forgetting this will make somebody sad.
+this algorithm has the best metrics,
+so why is everone getting the same ad?
+try to think about your tools,
+try to limit your needs,
+try not not to be the optimal model,
+that was found by trying random seeds.

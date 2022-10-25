@@ -1,5 +1,4 @@
 from io import BytesIO
-from os import listdir
 from pathlib import Path
 from random import choice
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -9,12 +8,13 @@ from fastapi import APIRouter
 from fastapi.responses import FileResponse, StreamingResponse
 from pandas import read_html
 
+from app import surprises
+
 log = structlog.get_logger()
 
 normie_router = APIRouter(responses={404: {"description": "Auth router not found"}})
 
 goodies_path = 'app/goodies/'
-surprises = [goodies_path + file for file in listdir(Path(goodies_path))]
 
 @normie_router.get('/schedule')
 def get_schedule(as_markdown:bool=True, as_csv:bool=False, as_excel:bool=False):
@@ -51,8 +51,15 @@ def get_normconf():
     return FileResponse(Path(f'{goodies_path}normconf_ascii.txt'))
 
 
+@normie_router.get('/zen')
+def get_zen():
+    """Return Zen of Normcore by Vincent D. Warmerdam
+    """
+    return FileResponse(Path(f'{goodies_path}zen_of_normcore.txt'))
+
+
 @normie_router.get('/random_goodies')
-def random_goodies():
+def get_random_goodie():
     """Return random goodie file from goodies directory
     """
     goodie = choice(surprises)
@@ -60,7 +67,8 @@ def random_goodies():
     if goodie.endswith('.png'):
         return FileResponse(goodie, media_type='image/png', filename=goodie[len(goodies_path):])
 
-    return FileResponse(goodie)
+    return FileResponse(Path(f'{goodie}'))
+
 
 
 @normie_router.get('/allthegoodies')
@@ -72,6 +80,8 @@ def get_goodies():
     zip_io = BytesIO()
     with ZipFile(zip_io, mode='w', compression=ZIP_DEFLATED) as temp_zip:
         for file in surprises:
+            if "rickroll" in file:
+                continue
             temp_zip.write(file, file[goodies_len:])
 
     return StreamingResponse(iter([zip_io.getvalue()]),
