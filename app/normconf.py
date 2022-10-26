@@ -2,6 +2,7 @@ from io import BytesIO
 from pathlib import Path
 from random import choice
 from zipfile import ZIP_DEFLATED, ZipFile
+from requests import post
 
 import structlog
 from fastapi import APIRouter
@@ -9,8 +10,10 @@ from fastapi.responses import FileResponse, StreamingResponse
 from pandas import read_html
 
 from app import surprises
+from app.config import get_settings
 
 log = structlog.get_logger()
+settings = get_settings()
 
 normie_router = APIRouter(responses={404: {"description": "Auth router not found"}})
 
@@ -57,6 +60,16 @@ def get_zen():
     """
     return FileResponse(Path(f'{goodies_path}zen_of_normcore.txt'))
 
+@normie_router.get('/get_talk')
+def get_talk(payload:str):
+    
+    API_URL = "https://api-inference.huggingface.co/models/gpt2"
+    headers = {"Authorization": f"Bearer {settings.hugging_face_api_key}"}
+    
+    response = post(API_URL, headers=headers, json=payload)    
+        
+    return response.json()
+
 
 @normie_router.get('/random_goodies')
 def get_random_goodie():
@@ -65,10 +78,12 @@ def get_random_goodie():
     goodie = choice(surprises)
 
     if goodie.endswith('.png'):
-        return FileResponse(goodie, media_type='image/png', filename=goodie[len(goodies_path):])
+        return FileResponse(goodie,
+                            media_type='image/png',
+                            filename=goodie[len(goodies_path):],
+                            headers={'Cache-Control': 'no-cache'})
 
-    return FileResponse(Path(f'{goodie}'))
-
+    return FileResponse(Path(f'{goodie}'), headers={'Cache-Control': 'no-cache'})
 
 
 @normie_router.get('/allthegoodies')

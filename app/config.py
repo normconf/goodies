@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     access_key_id: Optional[str] = Field(None, title="AWS Access Key")
     region: Optional[str] = Field(None, title="AWS Region")
     secret_access_key: Optional[str] = Field(None, title="AWS Secret Key")
+    hugging_face_api_key: Optional[str] = Field(title="Huggingface API Key")
     
     class Config:
         env_file = "app/.local.env"
