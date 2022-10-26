@@ -36,7 +36,7 @@ class Settings(BaseSettings):
 def get_settings(env=None):
     if not env:
         env = environ.get("ENV")
-    elif env == "INTEGRATION":
+    if env == "INTEGRATION":
         return Settings(app_env="INTEGRATION", _env_file="app/.integration.env")
     else:
         return Settings()
