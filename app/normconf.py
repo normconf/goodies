@@ -1,16 +1,18 @@
 from io import BytesIO
+from json import loads
 from pathlib import Path
 from random import choice
 from zipfile import ZIP_DEFLATED, ZipFile
-from requests import post
 
 import structlog
 from fastapi import APIRouter
 from fastapi.responses import FileResponse, StreamingResponse
 from pandas import read_html
+from requests import post
 
 from app import surprises
 from app.config import get_settings
+from app.schemas import GetTalkRequest, TalkResponse
 
 log = structlog.get_logger()
 settings = get_settings()
@@ -60,16 +62,17 @@ def get_zen():
     """
     return FileResponse(Path(f'{goodies_path}zen_of_normcore.txt'))
 
-@normie_router.get('/get_talk')
-def get_talk(payload:str):
+@normie_router.post('/get_talk')
+def get_talk(request: GetTalkRequest): #-> TalkResponse:
     
     API_URL = "https://api-inference.huggingface.co/models/gpt2"
     headers = {"Authorization": f"Bearer {settings.hugging_face_api_key}"}
     
-    response = post(API_URL, headers=headers, json=payload)    
-        
-    return response.json()
+    response = post(API_URL, headers=headers, json=request.talk_title)    
 
+    content = loads(response.text)[0]["generated_text"]
+    
+    return TalkResponse(talk_content=content)
 
 @normie_router.get('/random_goodies')
 def get_random_goodie():

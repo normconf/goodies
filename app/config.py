@@ -34,26 +34,11 @@ class Settings(BaseSettings):
 
 @lru_cache
 def get_settings(env=None):
-    """Requires environment variable to be passed at run-time to determine which .env file to use.
-    Depends on which environment you'd prefer to emulate:
-    LOCAL — Local repo
-    DEV — DOCKER testing
-    INTEGRATION — AWS + Bubble Testing
-    PRODUCTION — AWS + Bubble Customer Facing
-
-    Returns:
-        Settings()
-    """
     if not env:
         env = environ.get("ENV")
-    if env == "DEV":
-        return Settings(_env_file="app/.dev.env", _env_file_encoding="utf-8")
     elif env == "INTEGRATION":
         return Settings(app_env="INTEGRATION", _env_file="app/.integration.env")
-    elif env == "PRODUCTION":
-        return Settings(app_env="PRODUCTION", _env_file="app/.dev.env")
     else:
         return Settings()
-
 
 settings = get_settings()
