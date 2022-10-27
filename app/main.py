@@ -24,7 +24,7 @@ origins = [
     "http://localhost",
     "http://localhost:8000",
     "https://localhost:8000",
-    "https://localhost:443"
+    "https://localhost:443",
 ]
 
 middleware = [
@@ -40,12 +40,12 @@ middleware = [
 
 # App Setup
 app = FastAPI(
-            title="NormConf Goodies App",
-            description="Send random goods to the normies",
-            docs_url="/docs",
-            openapi_url="/api",
-            middleware=middleware,
-            )
+    title="NormConf Goodies App",
+    description="Send random goods to the normies",
+    docs_url="/docs",
+    openapi_url="/api",
+    middleware=middleware,
+)
 
 
 @app.get("/", tags=["health"], response_model=HealthCheck, name="App Health Check")
@@ -67,7 +67,7 @@ def info(settings_: Settings = Depends(get_settings)):
 
 
 @app.get("/v1", tags=["status"], name="V1 Status Check")
-async def root():
+def root():
     return {"message": f"{settings.app_version}"}
 
 

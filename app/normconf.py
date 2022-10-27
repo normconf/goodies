@@ -98,7 +98,7 @@ def get_random_goodie():
 
 
 @normie_router.get("/wisdom", response_class=Response)
-async def get_random_wisdom():
+def get_random_wisdom():
     """Get a random hand-picked link"""
 
     link_path = Path("app/goodies/links.txt")
