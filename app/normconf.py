@@ -1,16 +1,14 @@
-from io import BytesIO
 from json import loads
+from os import listdir
 from pathlib import Path
 from random import choice
-from zipfile import ZIP_DEFLATED, ZipFile
 
 import structlog
 from fastapi import APIRouter
-from fastapi.responses import FileResponse, StreamingResponse, PlainTextResponse, Response
+from fastapi.responses import FileResponse, PlainTextResponse, Response
 from pandas import read_html
 from requests import post
 
-from app import surprises
 from app.config import get_settings
 from app.schemas import GetTalkRequest, TalkResponse
 
@@ -19,7 +17,11 @@ settings = get_settings()
 
 normie_router = APIRouter(responses={404: {"description": "Auth router not found"}})
 
-goodies_path = "app/goodies/"
+#### Cached at top so as to not run every curl
+goodies_path = "app/goodies/media/"
+surprises = [goodies_path + file for file in listdir(Path(goodies_path))]
+link_path = Path("app/goodies/links.txt")
+links = open(link_path).read().splitlines()
 
 
 @normie_router.get("/schedule")
@@ -48,21 +50,21 @@ def get_schedule(as_markdown: bool = True, as_csv: bool = False, as_excel: bool 
         )
 
     elif as_markdown:
-        return schedule.to_markdown(tablefmt="github", index=False)
+        return PlainTextResponse(schedule.to_markdown(tablefmt="github", index=False))
 
     return schedule
 
 
-@normie_router.get("/normconf")
+@normie_router.get("/ascii")
 def get_normconf():
     """Return ASCII file of normconf"""
-    return FileResponse(Path(f"{goodies_path}normconf_ascii.txt"))
+    return PlainTextResponse(Path(f"{goodies_path}normconf_ascii.txt").read_text())
 
 
 @normie_router.get("/zen")
 def get_zen():
     """Return Zen of Normcore by Vincent D. Warmerdam"""
-    return FileResponse(Path(f"{goodies_path}zen_of_normcore.txt"))
+    return PlainTextResponse(Path(f"{goodies_path}zen_of_normcore.txt").read_text())
 
 
 @normie_router.post("/get_talk")
@@ -73,17 +75,18 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
 
     response = post(API_URL, headers=headers, json=request.talk_title)
 
-    content = loads(response.text)[0]["generated_text"]
+    try:
+        content = loads(response.text)[0]["generated_text"]
+        return TalkResponse(talk_content=content)
 
-    return TalkResponse(talk_content=content)
+    except ValueError as e:
+        log.error(e)
+        raise e
 
 
 @normie_router.get("/random_goodies")
 def get_random_goodie():
     """Return random goodie file from goodies directory"""
-    link_path = Path("app/goodies/links.txt")
-    links = open(link_path).read().splitlines()
-
     goodie = choice(surprises)
 
     if goodie.endswith(".png"):
@@ -94,16 +97,12 @@ def get_random_goodie():
             headers={"Cache-Control": "no-cache"},
         )
 
-    return FileResponse(Path(f"{goodie}"), headers={"Cache-Control": "no-cache"})
+    return PlainTextResponse(Path(f"{goodie}").read_text(), headers={"Cache-Control": "no-cache"})
 
 
-@normie_router.get("/wisdom", response_class=Response)
+@normie_router.get("/wisdom")
 def get_random_wisdom():
     """Get a random hand-picked link"""
-
-    link_path = Path("app/goodies/links.txt")
-    links = open(link_path).read().splitlines()
-
     random_link = choice(links)
 
     return Response(random_link + "\n")

@@ -20,7 +20,7 @@ Ideas
 3 pizza-delimited values and maybe a link to that twitter conversation about delimiters
 
 
-# To Develop Locally: 
+## To Develop Locally
 
 1. Clone and go to repo root
 2. `make integration` to build and run locally with Poetry (requires Python 3.10+)

@@ -1,8 +1,7 @@
 # app main -- setup logging
 
 from logging import NOTSET, Logger
-from os import getenv, listdir
-from pathlib import Path
+from os import getenv
 
 import structlog
 
@@ -31,7 +30,3 @@ def configure_logger() -> Logger:
         log_configuration["processors"] = [structlog.processors.JSONRenderer()]
     structlog.configure(**log_configuration)
     return structlog.get_logger()
-
-
-goodies_path = "app/goodies/media/"
-surprises = [goodies_path + file for file in listdir(Path(goodies_path))]

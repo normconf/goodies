@@ -22,7 +22,12 @@ class HealthCheck(BaseModel):
 
 
 class GetTalkRequest(BaseModel):
-    talk_title: str = Field(title="Talk Title", description="Enter a talk title and receive its contents!")
+    talk_title: str = Field(
+        title="Talk Title", description="Enter a talk title and receive its contents!"
+    )
+
 
 class TalkResponse(BaseModel):
-    talk_content: str = Field(title="Talk Content", description="The conent of a talk, before it even happens!")
+    talk_content: str = Field(
+        title="Talk Content", description="The conent of a talk, before it even happens!"
+    )

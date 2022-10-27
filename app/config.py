@@ -26,7 +26,7 @@ class Settings(BaseSettings):
     region: Optional[str] = Field(None, title="AWS Region")
     secret_access_key: Optional[str] = Field(None, title="AWS Secret Key")
     hugging_face_api_key: Optional[str] = Field(title="Huggingface API Key")
-    
+
     class Config:
         env_file = "app/.local.env"
         env_file_encoding = "utf-8"
@@ -40,5 +40,6 @@ def get_settings(env=None):
         return Settings(app_env="INTEGRATION", _env_file="app/.integration.env")
     else:
         return Settings()
+
 
 settings = get_settings()
