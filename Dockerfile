@@ -1,12 +1,10 @@
 FROM python:3.10-slim
 
-# Install python/pip
-
-COPY ./app /app
-
-COPY ./requirements.txt /app/requirements.txt
-
-RUN pip install --no-cache-dir -r app/requirements.txt
+# Copy requirements before building so as to not invalidate build cache
+COPY requirements.txt app/requirements.txt
+WORKDIR /app
+RUN pip install -r /app/requirements.txt
+COPY . /app
 
 ENV ENV="INTEGRATION"
 

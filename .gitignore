@@ -5,3 +5,6 @@
 /app/*.env
 
 app/__pycache__
+
+.DS_Store
+/.trunk
