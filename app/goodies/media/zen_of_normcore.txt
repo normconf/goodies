@@ -1,13 +1,21 @@
-the zen of normcore
-sometimes it’s hardcore science,
+> the zen of normcore
+
+Sometimes it's hardcore science,
 but deep down in our heart,
-we know that a for loop in a Python file,
-can outperform the state of the art
-all programs live in a system
-forgetting this will make somebody sad.
-this algorithm has the best metrics,
-so why is everyone getting the same ad?
-try to think about your tools,
-try to limit your needs,
-try not not to be the optimal model,
+we know that a for loop in Python,
+can outperform the state-of-the-art.
+
+All programs live in a system.
+Forgetting this will make somebody sad.
+This algorithm has the best metrics.
+So why is everyone getting the same ad?
+ 
+Don't worry too much about new libraries.
+Simple tricks are here to stay.
+Sometimes when you ignore a problem,
+it will automatically go away. 
+
+Try to think about your tools.
+Try to limit your needs.
+Try not not to be the optimal model,
 that was found by trying random seeds.
