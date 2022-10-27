@@ -25,7 +25,7 @@ build:
 	docker build -f ./Dockerfile -t goodies .
 
 run: build
-	docker run --env ENV='INTEGRATION' --env-file ./app/.integration.env --rm -it --name goodies -p 8000:8000 goodies
+	docker run --env-file ./app/.integration.env --rm -it --name goodies -p 8000:8000 goodies
 
 reformat:
 	poetry run black ./ && \
