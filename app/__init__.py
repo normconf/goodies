@@ -33,5 +33,5 @@ def configure_logger() -> Logger:
     return structlog.get_logger()
 
 
-goodies_path = 'app/goodies/'
+goodies_path = "app/goodies/media/"
 surprises = [goodies_path + file for file in listdir(Path(goodies_path))]

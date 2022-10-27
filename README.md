@@ -6,12 +6,11 @@ Using latent-space embeddings we synthesize every arxiv deep learning finding in
 ....
 
 
-| API | endpoint | description |
-|-----| ---------| ------------ | 
-| normconf | api.normconf.com/normconf | ASCII Goodness | 
-| random_goodies | api.normconf.com/random_goodies | Random Goodness | 
-| allthegoodies | api.normconf.com/allthegoodies | Too Much Goodness | 
-| schdeule | api.normconf.com/schedule | Normconf Schedule Goodness | 
+| API            | endpoint                        | description                |
+| -------------- | ------------------------------- | -------------------------- |
+| normconf       | api.normconf.com/normconf       | ASCII Goodness             |
+| random_goodies | api.normconf.com/random_goodies | Random Goodness            |
+| schedule       | api.normconf.com/schedule       | Normconf Schedule Goodness |
 
 
 Ideas
@@ -21,5 +20,8 @@ Ideas
 3 pizza-delimited values and maybe a link to that twitter conversation about delimiters
 
 
-# TO DO
-- remove pycache from repo
+# To Develop Locally: 
+
+1. Clone and go to repo root
+2. `make integration` to build and run locally with Poetry (requires Python 3.10+)
+3. `make run` to build and run Docker image locally
