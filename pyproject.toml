@@ -20,6 +20,7 @@ uvicorn = "^0.17.6"
 black = "^22.10.0"
 flake8 = "^5.0.4"
 isort = "^5.10.1"
+coverage = "^6.5.0"
 
 [tool.poetry.dev-dependencies]
 ipykernel = "^6.13.0"
