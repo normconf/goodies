@@ -2,13 +2,12 @@ name: Goodies CI
 # Controls when the action will run.
 
 on:
+  # Only trigger, when the build workflow succeeded
+  workflow_run:
+    workflows: ["test CI"]
+    types:
+      - completed
   workflow_dispatch:
-  push:
-    branches:
-      - "*"
-      - "main"
-  pull_request:
-  # Allows you to run this workflow manually from the Actions tab
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
@@ -31,7 +30,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  deploy:
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -62,17 +61,13 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG"
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def-app
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_TASK_DEFINITION }}
           container-name: ${{ env.APP_CONTAINER_NAME }}
-          image: image::$ECR_REGISTRY/$ECR_APP_REPOSITORY:$IMAGE_TAG
+          image: ${{ steps.build-fastapi-app.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

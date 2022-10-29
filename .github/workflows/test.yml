@@ -62,5 +62,4 @@ jobs:
           source .venv/bin/activate;
           poetry run black ./  && \
           poetry run isort ./ && \
-          poetry run pytest ./app/ && \
-          poetry run coverage report;
+          poetry run pytest ./app/ ;
