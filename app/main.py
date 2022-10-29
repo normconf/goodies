@@ -6,8 +6,11 @@ __version__ = "1.0.0"
 __maintainer__ = "Ben Labaschin"
 __email__ = "benjaminlabaschin@gmail.com"
 
-
 from fastapi import Depends, FastAPI
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
+from slowapi.util import get_remote_address
 from starlette.middleware import Middleware
 from starlette.middleware.cors import CORSMiddleware
 
@@ -43,6 +46,8 @@ middleware = [
     )
 ]
 
+limiter = Limiter(key_func=get_remote_address, default_limits=["1000/hour"])
+
 # App Setup
 app = FastAPI(
     title="NormConf Goodies App",
@@ -52,6 +57,9 @@ app = FastAPI(
     middleware=middleware,
 )
 
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 @app.get("/", tags=["health"], response_model=HealthCheck, name="App Health Check")
 def health() -> HealthCheck:
