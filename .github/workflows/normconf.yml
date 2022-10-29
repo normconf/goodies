@@ -5,26 +5,28 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - '*'
-      - 'main'
+      - "*"
+      - "main"
   pull_request:
   # Allows you to run this workflow manually from the Actions tab
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  group: "${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}"
   cancel-in-progress: true
 
 env:
-  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }}                   # set this to your preferred AWS region, e.g. us-west-1
+  AWS_ACCESS_KEY: ${{ secrets.AWS_ACCESS_KEY }} # set this to your preferred AWS region, e.g. us-west-1
   AWS_REGION: ${{ secrets.AWS_REGION }}
-  ECR_APP_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}           # App repository name
-  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}                # set this to your Amazon ECS service name
-  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}                # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION:  .aws/normconf-task-definition.json     # set this to the path to your Amazon ECS task definition
-                                               # file, e.g. .aws/task-definition.json
-  APP_CONTAINER_NAME: goodies           # set this to the name of the container in the
-                                               # containerDefinitions section of your task definition
+  ECR_APP_REPOSITORY: ${{ secrets.ECR_REPOSITORY }} # App repository name
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE }} # set this to your Amazon ECS service name
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }} # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION:
+    .aws/normconf-task-definition.json # set this to the path to your Amazon ECS task definition
+    # file, e.g. .aws/task-definition.json
+  APP_CONTAINER_NAME:
+    goodies # set this to the name of the container in the
+    # containerDefinitions section of your task definition
 
 permissions:
   contents: read
@@ -66,7 +68,6 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: main
     steps:
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def-app
@@ -83,4 +84,3 @@ jobs:
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
-        
