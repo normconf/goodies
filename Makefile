@@ -3,7 +3,7 @@
 
 SHELL := /bin/bash
 
-.PHONY: activate requirements integration run build test
+.PHONY: activate requirements integration run build tests
 
 
 activate:
@@ -27,7 +27,7 @@ build:
 run: build
 	docker run --env-file ./app/.integration.env --rm -it --name goodies -p 8000:8000 goodies
 
-reformat:
+tests:
 	poetry run black ./ && \
-	poetry run flake8 ./ && \
-	poetry run isort ./
+	poetry run isort ./ && \
+	poetry run pytest ./app/
