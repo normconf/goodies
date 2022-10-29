@@ -25,6 +25,11 @@ origins = [
     "http://localhost:8000",
     "https://localhost:8000",
     "https://localhost:443",
+    "https://api.normcomf.com:8000",
+    "https://api.normcomf.com:80",
+    "https://api.normcomf.com:443",
+    "https://api-inference.huggingface.co/models/gpt2",
+    "https://api-inference.huggingface.co/",
 ]
 
 middleware = [
