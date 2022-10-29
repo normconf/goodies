@@ -50,7 +50,10 @@ def get_schedule(as_markdown: bool = True, as_csv: bool = False, as_excel: bool 
         )
 
     elif as_markdown:
-        return PlainTextResponse(schedule.to_markdown(tablefmt="github", index=False))
+        return PlainTextResponse(
+            schedule.to_markdown(tablefmt="github", index=False),
+            headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
+        )
 
     return schedule
 
@@ -58,7 +61,10 @@ def get_schedule(as_markdown: bool = True, as_csv: bool = False, as_excel: bool 
 @normie_router.get("/ascii")
 def get_normconf():
     """Return ASCII file of normconf"""
-    return PlainTextResponse(Path(f"{goodies_path}normconf_ascii.txt").read_text())
+    return PlainTextResponse(
+        Path(f"{goodies_path}normconf_ascii.txt").read_text(),
+        headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
+    )
 
 
 @normie_router.get("/zen")
@@ -94,10 +100,13 @@ def get_random_goodie():
             goodie,
             media_type="image/png",
             filename=goodie[len(goodies_path) :],
-            headers={"Cache-Control": "no-cache"},
+            headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
         )
 
-    return PlainTextResponse(Path(f"{goodie}").read_text(), headers={"Cache-Control": "no-cache"})
+    return PlainTextResponse(
+        Path(f"{goodie}").read_text(),
+        headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
+    )
 
 
 @normie_router.get("/wisdom")

@@ -25,14 +25,28 @@ settings = get_settings()
 
 origins = [
     "http://localhost",
+    "https://localhost",
     "http://localhost:8000",
     "https://localhost:8000",
+    "http://localhost:443",
     "https://localhost:443",
+    "http://*.normconf.com",
+    "https://*.normconf.com",
+    "http://normconf.com",
+    "https://normconf.com",
+    "http://normconf.com/*",
+    "https://normconf.com/*",
+    "http://api.normcomf.com:8000",
     "https://api.normcomf.com:8000",
+    "http://api.normcomf.com:80",
     "https://api.normcomf.com:80",
+    "http://api.normcomf.com:443",
     "https://api.normcomf.com:443",
+    "http://api-inference.huggingface.co/models/gpt2",
     "https://api-inference.huggingface.co/models/gpt2",
-    "https://api-inference.huggingface.co/",
+    "http://api-inference.huggingface.co/",
+    "https://api-inference.huggingface.co/" "http://api-inference.huggingface.co/*",
+    "https://api-inference.huggingface.co/*",
 ]
 
 middleware = [
@@ -60,6 +74,7 @@ app = FastAPI(
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+
 
 @app.get("/", tags=["health"], response_model=HealthCheck, name="App Health Check")
 def health() -> HealthCheck:
