@@ -1,0 +1,21 @@
+on:
+  push:
+    branches:    
+      - '*'         # matches every branch that doesn't contain a '/'
+      - '*/*'       # matches every branch containing a single '/'
+      - '**'        # matches every branch
+      - '!main'     # excludes main
+
+  build:
+    name: Pytest and lint in Pipenv    # runs on the latest Ubuntu
+    runs-on: ubuntu-latest     # runs within your Docker container
+    container:
+      image: docker://normconf/goodies:latest    # checkout your code from your repository
+    # and runs pytest in your pipenv environment
+    steps:
+    - uses: actions/checkout@v2
+    - name: Test with pytest
+      run: |
+          poetry run pytest tests/
+          poetry run black
+
