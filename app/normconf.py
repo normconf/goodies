@@ -92,7 +92,7 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
         -H 'accept: application/json' \
         -H 'Content-Type: application/json' \
         -d '{
-        "talk_title": "Vicki Boykis is giving the keynote which will be about"
+        "talk_title": "{enter a title here}"
         }'
         
     """
