@@ -87,7 +87,14 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
     Enter a talk title and return the content as decided by GPT-2
 
     Curl:\n
-        curl api.normconf.com
+        curl -X 'POST' \
+        'http://api.normconf.com/get_talk' \
+        -H 'accept: application/json' \
+        -H 'Content-Type: application/json' \
+        -d '{
+        "talk_title": "Vicki Boykis is giving the keynote which will be about"
+        }'
+        
     """
     settings = get_settings()
 
