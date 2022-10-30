@@ -17,7 +17,7 @@ Using latent-space embeddings we synthesize every arxiv deep learning finding in
 | wisdom   | api.normconf.com/wisdom   | Normconf Schedule Goodness                                    |
 | talks    | api.normconf.com/get_talk | Find out what someone's talk will be about according to GPT-2 |
 
-API Docs live here. 
+[API Docs](api.normconf.com/docs)
 
 ## To Develop Locally
 
