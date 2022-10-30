@@ -1,24 +1,23 @@
 # NormConf API
+![](https://raw.githubusercontent.com/normconf/goodies/main/app/goodies/media/normconf_logo.png?token=GHSAT0AAAAAABZNNDSLZ7QY2VCAIFC54ILKY2653VQ)
+
 Welcome to the most impactful API you've never heard of!
+
+From the creators of [NormConf the conference](https://normconf.com/), happening December 15. 
 
 Using latent-space embeddings we synthesize every arxiv deep learning finding in the last 10 years into a k8s cluster. Then we decompose the logits into a novel, multi-headed attention model with distributed compute across 13 time zones. 
 
-....
 
 
-| API            | endpoint                        | description                |
-| -------------- | ------------------------------- | -------------------------- |
-| normconf       | api.normconf.com/normconf       | ASCII Goodness             |
-| random_goodies | api.normconf.com/random_goodies | Random Goodness            |
-| schedule       | api.normconf.com/schedule       | Normconf Schedule Goodness |
+| API      | endpoint                  | description                                                   |
+| -------- | ------------------------- | ------------------------------------------------------------- |
+| normconf | api.normconf.com/normconf | ASCII Goodness                                                |
+| random   | api.normconf.com/random   | Random Goodness                                               |
+| schedule | api.normconf.com/schedule | Normconf Schedule Goodness                                    |
+| wisdom   | api.normconf.com/wisdom   | Normconf Schedule Goodness                                    |
+| talks    | api.normconf.com/get_talk | Find out what someone's talk will be about according to GPT-2 |
 
-
-Ideas
-
-1 a randomized response of our curated list of blog posts,
-2 same as 1 but shitposts,
-3 pizza-delimited values and maybe a link to that twitter conversation about delimiters
-
+[API Docs](api.normconf.com/docs)
 
 ## To Develop Locally
 
