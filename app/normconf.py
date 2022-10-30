@@ -59,7 +59,10 @@ def get_schedule(as_markdown: bool = True, as_csv: bool = False, as_excel: bool 
 
 @normie_router.get("/ascii")
 def get_normconf():
-    """Return ASCII file of normconf"""
+    """Return Normconf Ascii Logo\n
+    Curl:\n
+        curl api.normconf.com/ascii
+    """
     return PlainTextResponse(
         Path(f"{goodies_path}normconf_ascii.txt").read_text(),
         headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
@@ -68,7 +71,10 @@ def get_normconf():
 
 @normie_router.get("/zen")
 def get_zen():
-    """Return Zen of Normcore by Vincent D. Warmerdam"""
+    """Return Zen of Normcore by Vincent D. Warmerdam
+    Curl:\n
+        curl api.normconf.com/zen
+    """
     return PlainTextResponse(
         Path(f"{goodies_path}zen_of_normcore.txt").read_text(),
         headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
@@ -77,7 +83,12 @@ def get_zen():
 
 @normie_router.post("/get_talk")
 def get_talk(request: GetTalkRequest):  # -> TalkResponse:
+    """
+    Enter a talk title and return the content as decided by GPT-2
 
+    Curl:\n
+        curl api.normconf.com
+    """
     settings = get_settings()
 
     assert settings.hugging_face_api_key is not None, ValueError("Huggingface key not provided.")
@@ -108,7 +119,11 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
 
 @normie_router.get("/random")
 def get_random_goodie():
-    """Return random goodie file from goodies directory"""
+    """Return random goodie file from goodies directory
+    Curl:\n
+        curl api.normconf.com/random
+    """
+
     goodie = choice(surprises)
 
     if goodie.endswith(".png"):
@@ -127,7 +142,10 @@ def get_random_goodie():
 
 @normie_router.get("/wisdom")
 def get_random_wisdom():
-    """Get a random hand-picked link"""
+    """Get a random hand-picked link
+    Curl:\n
+        curl api.normconf.com/wisdom
+    """
     random_link = choice(links)
 
     return Response(
