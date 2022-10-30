@@ -89,7 +89,6 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
 
     assert response is not None, ValueError("Huggingface Response returned none object")
 
-
     try:
         content = loads(response.text)[0]["generated_text"]
         return TalkResponse(talk_content=content)

@@ -21,8 +21,6 @@ from app.schemas import HealthCheck, HealthCheckContent
 
 log = configure_logger()
 
-settings = get_settings()
-
 origins = [
     "http://localhost",
     "https://localhost",
@@ -69,6 +67,7 @@ app = FastAPI(
     docs_url="/docs",
     openapi_url="/api",
     middleware=middleware,
+    debug=True,
 )
 
 app.state.limiter = limiter
@@ -84,7 +83,7 @@ def health() -> HealthCheck:
 @app.get("/info", tags=["status"], name="Information About App Environment")
 def info(settings_: Settings = Depends(get_settings)):
     if not all(x is not None for x in settings_.__dict__.values()):
-        missing_keys = [key for key, val in settings_.__dict__.items() if not val]
+        missing_keys = [key for key, val in settings_().__dict__.items() if not val]
         return {"Missing Keys:": missing_keys}
 
     return {
@@ -96,7 +95,7 @@ def info(settings_: Settings = Depends(get_settings)):
 
 @app.get("/v1", tags=["status"], name="V1 Status Check")
 def root():
-    return {"message": f"{settings.app_version}"}
+    return {"message": f"{get_settings().app_version}"}
 
 
 # Routers
