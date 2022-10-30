@@ -10,7 +10,7 @@ from pandas import read_html
 from requests import post
 
 from app.config import get_settings
-from app.schemas import GetTalkRequest, TalkResponse
+from app.schemas import GetTalkRequest
 
 log = structlog.get_logger()
 
@@ -69,7 +69,10 @@ def get_normconf():
 @normie_router.get("/zen")
 def get_zen():
     """Return Zen of Normcore by Vincent D. Warmerdam"""
-    return PlainTextResponse(Path(f"{goodies_path}zen_of_normcore.txt").read_text())
+    return PlainTextResponse(
+        Path(f"{goodies_path}zen_of_normcore.txt").read_text(),
+        headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
+    )
 
 
 @normie_router.post("/get_talk")
@@ -77,28 +80,33 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
 
     settings = get_settings()
 
-    log.info(settings.hugging_face_api_key)
-
     assert settings.hugging_face_api_key is not None, ValueError("Huggingface key not provided.")
 
     API_URL = "https://api-inference.huggingface.co/models/gpt2"
-    headers = {"Authorization": f"Bearer {settings.hugging_face_api_key}"}
-
-    response = post(API_URL, headers=headers, json=request.talk_title)
-    log.info(response)
+    headers = {
+        "Authorization": f"Bearer {settings.hugging_face_api_key}",
+        "Cache-Control": "no-cache",
+    }
+    params = dict(
+        max_new_tokens=250,
+        return_full_text=False,
+        num_return_sequences=10,
+        max_time=20.0,
+        use_cache=False,
+    )
+    response = post(API_URL, headers=headers, json=request.talk_title, params=params)
 
     assert response is not None, ValueError("Huggingface Response returned none object")
 
     try:
-        content = loads(response.text)[0]["generated_text"]
-        return TalkResponse(talk_content=content)
+        return loads(response.content.decode("utf-8"))[0]["generated_text"]
 
     except ValueError as e:
         log.error(e)
         raise e
 
 
-@normie_router.get("/random_goodies")
+@normie_router.get("/random")
 def get_random_goodie():
     """Return random goodie file from goodies directory"""
     goodie = choice(surprises)
@@ -122,4 +130,6 @@ def get_random_wisdom():
     """Get a random hand-picked link"""
     random_link = choice(links)
 
-    return Response(random_link + "\n")
+    return Response(
+        random_link + "\n",
+    )
