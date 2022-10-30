@@ -32,7 +32,6 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
-@lru_cache
 def get_settings(env=None):
     if not env:
         env = environ.get("ENV")
@@ -40,6 +39,3 @@ def get_settings(env=None):
         return Settings(app_env="INTEGRATION", _env_file="app/.integration.env")
     else:
         return Settings()
-
-
-settings = get_settings()

@@ -13,7 +13,6 @@ from app.config import get_settings
 from app.schemas import GetTalkRequest, TalkResponse
 
 log = structlog.get_logger()
-settings = get_settings()
 
 normie_router = APIRouter(responses={404: {"description": "Auth router not found"}})
 
@@ -76,10 +75,20 @@ def get_zen():
 @normie_router.post("/get_talk")
 def get_talk(request: GetTalkRequest):  # -> TalkResponse:
 
+    settings = get_settings()
+
+    log.info(settings.hugging_face_api_key)
+
+    assert settings.hugging_face_api_key is not None, ValueError("Huggingface key not provided.")
+
     API_URL = "https://api-inference.huggingface.co/models/gpt2"
     headers = {"Authorization": f"Bearer {settings.hugging_face_api_key}"}
 
     response = post(API_URL, headers=headers, json=request.talk_title)
+    log.info(response)
+
+    assert response is not None, ValueError("Huggingface Response returned none object")
+
 
     try:
         content = loads(response.text)[0]["generated_text"]
