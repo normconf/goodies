@@ -63,4 +63,4 @@ jobs:
       #----------------------------------------------
       - name: Execute image cleanup
         run: |
-          poetry run python my_file.py $AWS_ACCESS_KEY $AWS_SECRET_ACCESS_KEY $REGION
+          poetry run python cleanup_images.py $AWS_ACCESS_KEY $AWS_SECRET_ACCESS_KEY $REGION
