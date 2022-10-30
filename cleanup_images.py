@@ -14,16 +14,13 @@ def cleanup_repository():
 
     all_images = ecr_client.list_images(repositoryName="normconf-goodies")
 
-    old_images = [
-        image for image in all_images["imageIds"] if not image["imageTag"].endswith("latest")
-    ]
+    # Go through every image, only the latest should have a tag, so grab all those without imageTag and get SHA
+    old_images = [image for image in all_images["imageIds"] if not image.get("imageTag")]
 
-    response2 = ecr_client.batch_delete_image(
-        repositoryName="normconf-goodies", imageIds=old_images
+    ecr_client.batch_delete_image(repositoryName="normconf-goodies", imageIds=old_images)
+
+    refresh_image_list = ecr_client.list_images(repositoryName="normconf-goodies")
+
+    print(
+        f"There are {len([image for image in refresh_image_list['imageIds'] if not image.get('imageTag')])} old images left"
     )
-
-    print(response2)
-
-
-if __name__ == "__main__":
-    cleanup_repository()

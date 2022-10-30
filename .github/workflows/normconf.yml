@@ -2,7 +2,7 @@ name: Goodies CI
 # Controls when the action will run.
 
 on:
-  # Only trigger, when the build workflow succeeded
+  # Only trigger, when the test workflow succeeded
   workflow_run:
     workflows: ["test CI"]
     types:
@@ -20,7 +20,8 @@ env:
   ECR_APP_REPOSITORY: ${{ secrets.ECR_REPOSITORY }} # App repository name
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }} # set this to your Amazon ECS service name
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }} # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: .aws/normconf-task-definition.json # set this to the path to your Amazon ECS task definition
+  ECS_TASK_DEFINITION:
+    .aws/normconf-task-definition.json # set this to the path to your Amazon ECS task definition
     # file, e.g. .aws/task-definition.json
   APP_CONTAINER_NAME:
     goodies # set this to the name of the container in the
