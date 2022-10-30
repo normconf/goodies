@@ -83,7 +83,7 @@ def health() -> HealthCheck:
 @app.get("/info", tags=["status"], name="Information About App Environment")
 def info(settings_: Settings = Depends(get_settings)):
     if not all(x is not None for x in settings_.__dict__.values()):
-        missing_keys = [key for key, val in settings_().__dict__.items() if not val]
+        missing_keys = [key for key, val in settings_.__dict__.items() if not val]
         return {"Missing Keys:": missing_keys}
 
     return {
