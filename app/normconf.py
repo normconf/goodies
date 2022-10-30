@@ -89,6 +89,8 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
     Curl:\n
         curl api.normconf.com
 
+    """
+
     API_URL = "https://api-inference.huggingface.co/models/gpt2"
     headers = {"Authorization": f"Bearer {settings.hugging_face_api_key}"}
 
