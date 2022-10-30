@@ -59,7 +59,12 @@ def get_schedule(as_markdown: bool = True, as_csv: bool = False, as_excel: bool 
 
 @normie_router.get("/ascii")
 def get_normconf():
-    """Return ASCII file of normconf"""
+    """Return Normconf Ascii Logo\n
+
+    Curl:\n
+        curl api.normconf.com/ascii
+
+    """
     return PlainTextResponse(
         Path(f"{goodies_path}normconf_ascii.txt").read_text(),
         headers={"Cache-Control": "no-cache", "Content-Disposition": "inline"},
@@ -68,18 +73,21 @@ def get_normconf():
 
 @normie_router.get("/zen")
 def get_zen():
-    """Return Zen of Normcore by Vincent D. Warmerdam"""
+    """Return Zen of Normcore by Vincent D. Warmerdam
+
+    Curl:\n
+        curl api.normconf.com/zen
+
+    """
     return PlainTextResponse(Path(f"{goodies_path}zen_of_normcore.txt").read_text())
 
 
 @normie_router.post("/get_talk")
 def get_talk(request: GetTalkRequest):  # -> TalkResponse:
+    """Enter a talk title and return the content as decided by GPT-2
 
-    settings = get_settings()
-
-    log.info(settings.hugging_face_api_key)
-
-    assert settings.hugging_face_api_key is not None, ValueError("Huggingface key not provided.")
+    Curl:\n
+        curl api.normconf.com
 
     API_URL = "https://api-inference.huggingface.co/models/gpt2"
     headers = {"Authorization": f"Bearer {settings.hugging_face_api_key}"}
@@ -98,9 +106,14 @@ def get_talk(request: GetTalkRequest):  # -> TalkResponse:
         raise e
 
 
-@normie_router.get("/random_goodies")
+@normie_router.get("/random")
 def get_random_goodie():
-    """Return random goodie file from goodies directory"""
+    """Return random goodie file from goodies directory
+
+    Curl:\n
+        curl api.normconf.com/random
+
+    """
     goodie = choice(surprises)
 
     if goodie.endswith(".png"):
@@ -119,7 +132,12 @@ def get_random_goodie():
 
 @normie_router.get("/wisdom")
 def get_random_wisdom():
-    """Get a random hand-picked link"""
+    """Get a random hand-picked link
+
+    Curl:\n
+        curl api.normconf.com/wisdom
+
+    """
     random_link = choice(links)
 
     return Response(random_link + "\n")

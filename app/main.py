@@ -7,6 +7,7 @@ __maintainer__ = "Ben Labaschin"
 __email__ = "benjaminlabaschin@gmail.com"
 
 from fastapi import Depends, FastAPI
+from fastapi.openapi.utils import get_openapi
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
@@ -61,18 +62,35 @@ middleware = [
 limiter = Limiter(key_func=get_remote_address, default_limits=["1000/hour"])
 
 # App Setup
-app = FastAPI(
-    title="NormConf Goodies App",
-    description="Send random goods to the normies",
-    docs_url="/docs",
-    openapi_url="/api",
-    middleware=middleware,
-    debug=True,
-)
+app = FastAPI()
+
+
+def my_schema():
+    openapi_schema = get_openapi(
+        title="NormConf Goodies App",
+        version="0.0.1",
+        description="Send random goods to the normies",
+        routes=app.routes,
+    )
+    openapi_schema["info"] = {
+        "title": "NormConf Goodies App",
+        "version": "0.0.1",
+        "description": "Send random goods to the normies",
+        "termsOfService": "https://normconf.com/",
+        "contact": {
+            "name": "NormConf",
+            "url": "https://normconf.com/",
+            "email": "benjaminlabaschin@gmail.com",
+        },
+    }
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
+
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.add_middleware(SlowAPIMiddleware)
+app.openapi = my_schema
 
 
 @app.get("/", tags=["health"], response_model=HealthCheck, name="App Health Check")
