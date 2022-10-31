@@ -11,7 +11,7 @@ Using latent-space embeddings we synthesize every arxiv deep learning finding in
 
 | API      | endpoint                  | description                                                   |
 | -------- | ------------------------- | ------------------------------------------------------------- |
-| normconf | api.normconf.com/normconf | ASCII Goodness                                                |
+| normconf | api.normconf.com/ascii | ASCII Goodness                                                |
 | random   | api.normconf.com/random   | Random Goodness                                               |
 | schedule | api.normconf.com/schedule | Normconf Schedule Goodness                                    |
 | wisdom   | api.normconf.com/wisdom   | Normconf Schedule Goodness                                    |
